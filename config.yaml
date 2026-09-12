@@ -1,0 +1,9 @@
+server:
+  host: 192.168.1.109
+  port: 54322
+
+mods:
+  directory: "./test_server/mods"
+
+update:
+  chunk_size: 1048576 # The permissible range is 0 - 4294967295 bytes (default: 1048576 bytes = 1MB)
