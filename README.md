@@ -1,4 +1,4 @@
-# MSBackend
+# OrionServer
 
 **Decentralized Minecraft launcher backend** — lightweight C++20 HTTP server that runs alongside your Minecraft server. Each server runs its own instance. Clients connect directly to the server's IP address. No central infrastructure required.
 
@@ -14,7 +14,7 @@
 
 ```
 ┌─────────────────┐         ┌─────────────────────────┐
-│  Minecraft      │         │  MSBackend              │
+│  Minecraft      │         │  OrionServer              │
 │  Server A       │◄───────►│  (port 8080)            │
 │  (with mods)    │         │  - serves /manifest     │
 └─────────────────┘         │  - filters files        │
@@ -33,7 +33,7 @@
 -->
 ## How It Works
 
-1. **Admin** places `MSBackend_backend` executable next to Minecraft server
+1. **Admin** places `OrionServer_backend` executable next to Minecraft server
 2. **Admin** configures `rules.json` (what files to send to clients)
 3. **Admin** runs the backend (e.g., on port 8080)
 4. **Client** launches their local launcher, enters Server IP:Port
@@ -42,7 +42,7 @@
 7. **Client** requests only missing/changed files via `GET /file/{name}`
 8. **Backend** applies filters (allowlist/blocklist) before responding
 
-## API Endpoints
+## API Endpoints (Deprecated)
 
 | Endpoint | Method | Response | Description |
 |----------|--------|----------|-------------|
@@ -71,9 +71,9 @@ Backend filters files **before** adding them to manifest:
 {
   "mode": "allowlist",
   "client_server": ["mods/shared.jar", "config/common.json"],
-  "client_only": ["mods/minimap.jar", "mods/jei.jar", "resourcepacks/"],
-  "server_only": ["mods/sponge.jar", "world/"],
-  "blacklist": ["mods/broken.jar", "secret/"]
+  "client_only": ["mods/minimap.jar", "mods/jei.jar", "mods/client_sponge.jar"],
+  "server_only": ["mods/sponge.jar", "mods/server_only_mod.jar"],
+  "blacklist": ["mods/broken.jar"]
 }
 ```
 
@@ -83,7 +83,7 @@ Backend filters files **before** adding them to manifest:
 | `client_server` | Files both sides need → send |
 | `client_only` | Client-only mods → send |
 | `server_only` | Server-only files → DON'T send |
-| `blacklist` | Explicitly banned → DON'T send |
+
 
 ## Security & DoS Protection
 
@@ -123,7 +123,7 @@ security:
 logging:
   enabled: true
   level: info
-  log_file: ./MSBackend.log
+  log_file: ./OrionServer.log
   access_log: ./access.log
 ```
 
@@ -152,8 +152,8 @@ Run: `ctest --output-on-failure`
 ## Build
 
 ```bash
-git clone https://github.com/yourname/MSBackend
-cd MSBackend
+git clone https://github.com/Barkosss/OrionServer
+cd OrionServer
 mkdir build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release
 make -j$(nproc)
@@ -173,13 +173,13 @@ cmake --build . --config Release
 ### On the Game Server (Linux)
 
 ```bash
-./MSBackend_backend --config ./config.yml
+./OrionServer --config ./config.yml
 ```
 
 ### On the Game Server (Windows)
 
 ```cmd
-MSBackend_backend.exe --config config.yml
+OrionServer.exe --config config.yml
 ```
 
 ### Client-Side Integration Example (Python launcher)
@@ -203,7 +203,7 @@ for file_info in manifest["files"]:
 
 ```
 /path/to/minecraft_server/
-├── MSBackend                    # executable
+├── OrionServer                  # executable
 ├── config.yml                   # backend config
 ├── rules.json                   # file filtering rules
 ├── mods/                        # server/client mods
@@ -227,8 +227,8 @@ for file_info in manifest["files"]:
 
 ## Requirements
 
-- C++20 compatible compiler (GCC 11+, Clang 14+, MSVC 2022+)
-- CMake 3.20+
+- C++20 compatible compiler (GCC 13+, Clang 14+, MSVC 2022+)
+- CMake 3.31+
 - Boost.Asio (header-only)
 
 ## License
