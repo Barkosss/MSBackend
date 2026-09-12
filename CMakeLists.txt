@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.31.5)
-project(MSBackend)
+project(OrionServer)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -9,62 +9,51 @@ set(BOOST_DIR "F:/tools/vcpkg/installed/x64-windows")
 set(Boost_INCLUDE_DIR "${BOOST_DIR}/include")
 set(Boost_LIBRARY_DIR "${BOOST_DIR}/lib")
 
-add_executable(MSBackend
-        src/config/Config.cpp
-        src/config/Config.h
-        src/utils/logger/Logger.cpp
-        src/utils/logger/Logger.h
+add_executable(OrionServer
         src/main.cpp
-        src/server/Server.cpp
-        src/server/Server.h
-        src/handlers/file_handler.cpp
-        src/handlers/file_handler.h
-        src/handlers/health_handler.cpp
-        src/handlers/health_handler.h
-        src/handlers/manifest_handler.cpp
-        src/handlers/manifest_handler.h
-        src/handlers/sync_handler.cpp
-        src/handlers/sync_handler.h
-        src/server/Router.cpp
-        src/server/Router.h)
+        src/utils/config.cpp
+        src/utils/rules.cpp
+        src/server/router.cpp
+        src/server/server.cpp
+        src/handlers/healthzHandler.cpp
+        src/handlers/manifestHandler.cpp
+        src/handlers/downloadHandler.cpp
+        src/handlers/checkHandler.cpp
+        src/handlers/reloadHandler.cpp
+)
 
-set_target_properties(MSBackend PROPERTIES
+set_target_properties(OrionServer PROPERTIES
     CXX_STANDARD 20
     CXX_STANDARD_REQUIRED ON
 )
 
-find_package(Boost REQUIRED COMPONENTS filesystem system)
-find_package(nlohmann_json 3.11.3 REQUIRED)
-find_package(Threads REQUIRED)
-find_package(OpenSSL REQUIRED)
+find_package(Boost REQUIRED COMPONENTS filesystem system url)
+find_package(yaml-cpp REQUIRED)
 
-target_link_libraries(MSBackend PRIVATE
+target_link_libraries(OrionServer PRIVATE
         ${Boost_LIBRARIES}
-        Threads::Threads
-        nlohmann_json::nlohmann_json
-        OpenSSL::Crypto
-        OpenSSL::SSL
+        yaml-cpp::yaml-cpp
 )
 
-target_compile_definitions(MSBackend PRIVATE
+target_compile_definitions(OrionServer PRIVATE
         BOOST_ASIO_HAS_CO_AWAIT
         BOOST_ASIO_NO_DEPRECATED
 )
 
-target_include_directories(MSBackend PRIVATE
+target_include_directories(OrionServer PRIVATE
         ${Boost_INCLUDE_DIRS}
         ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
 if(WIN32)
-target_compile_definitions(MSBackend PRIVATE
+target_compile_definitions(OrionServer PRIVATE
         _WIN32_WINNT=0x0A00
         BOOST_ALL_DYN_LINK
 )
 endif()
 
 if(UNIX AND NOT WIN32)
-    target_compile_definitions(MSBackend PRIVATE
+    target_compile_definitions(OrionServer PRIVATE
         _GNU_SOURCE
     )
 endif()
