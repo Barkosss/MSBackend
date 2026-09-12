@@ -38,11 +38,11 @@ int main(int argc, char* argv[]) {
     try {
         boost::asio::io_context io_context{};
 
-        Router::getInstance().addRoute(http::verb::get, "/healthz", healthzHandler);
-        Router::getInstance().addRoute(http::verb::get, "/manifest", manifestHandler);
-        Router::getInstance().addRoute(http::verb::post, "/download", downloadHandler); // TODO
-        Router::getInstance().addRoute(http::verb::post, "/check", checkHandler); // TODO
-        Router::getInstance().addRoute(http::verb::get, "/reload", reloadHandler);
+        Router::getInstance().addRoute(http::verb::get, "/api/healthz", healthzHandler);
+        Router::getInstance().addRoute(http::verb::get, "/api/manifest", manifestHandler);
+        Router::getInstance().addRoute(http::verb::post, "/api/download", downloadHandler); // TODO
+        Router::getInstance().addRoute(http::verb::post, "/api/check", checkHandler); // TODO
+        Router::getInstance().addRoute(http::verb::get, "/api/reload", reloadHandler);
 
         Server server(io_context, port);
 
